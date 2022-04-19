@@ -1,0 +1,216 @@
+swagger: "2.0"
+info:
+  version: "0.0.1"
+  title: "User Operation System"
+host: "localhost:8080"
+basePath: "/v1"
+schemes:
+  - "http"
+consumes:
+  -  "application/json"
+produces:
+  - "application/json"
+securityDefinitions:
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header
+paths:
+  /users:
+    get:
+      operationId: "getAllUsers"
+      description: "fetch all users base on filter"
+      tags:
+        - service
+      parameters:
+        - in: query
+          name: limit
+          type: integer
+          minimum: 1
+        - in: query
+          name: name
+          type: string
+      responses:
+        200:
+          description: "successfully save user object into database"
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/user_response'
+        204:
+          description: "no content in database"
+        401:
+          $ref: '#/responses/401'
+        404:
+          $ref: '#/responses/404'
+        default:
+          $ref: '#/responses/500'
+  /user:
+    post:
+      operationId: "registerUser"
+      description: "register new user to database"
+      tags:
+        - service
+      parameters:
+        - in: body
+          name: user
+          required: true
+          schema:
+            $ref: '#/definitions/user'
+      responses:
+        201:
+          description: "successfully save user object into database"
+          schema:
+            $ref: '#/definitions/user_response'
+        401:
+          $ref: '#/responses/401'
+        409:
+          $ref: '#/responses/409'
+        default:
+          $ref: '#/responses/500'
+  /user/{user_id}:
+    get:
+      operationId: "getUser"
+      description: "get user base on id"
+      tags:
+        - service
+      parameters:
+        - in: path
+          type: string
+          required: true
+          name: user_id
+      responses:
+        200:
+          description: "successfully save user object into database"
+          schema:
+            $ref: '#/definitions/user_response'
+        401:
+          $ref: '#/responses/401'
+        404:
+          $ref: '#/responses/404'
+        default:
+          $ref: '#/responses/500'
+    delete:
+      operationId: "deleteUser"
+      description: "delete user"
+      tags:
+        - service
+      parameters:
+        - in: path
+          name: user_id
+          type: string
+          required: true
+      responses:
+        204:
+          description: "successfully delete user"
+        401:
+          $ref: '#/responses/401'
+        404:
+          $ref: '#/responses/404'
+        default:
+          $ref: '#/responses/500'
+    patch:
+      operationId: "updateUser"
+      description: "update user name or address"
+      tags:
+        - service
+      parameters:
+        - in: body
+          name: user
+          required: true
+          schema:
+            $ref: '#/definitions/update_user'
+        - in: path
+          name: user_id
+          type: string
+          required: true
+      responses:
+        200:
+          description: "successfully update user"
+          schema:
+              $ref: '#/definitions/user_response'
+        401:
+          $ref: '#/responses/401'
+        404:
+          $ref: '#/responses/404'
+        default:
+          $ref: '#/responses/500'
+definitions:
+  user_response:
+    type: object
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      email:
+        type: string
+      address:
+        type: string
+      created_at:
+        type: string
+
+  update_user:
+    type: object
+    properties:
+      name:
+        type: string
+        minLength: 3
+        maxLength: 32
+      address:
+        type: string
+  user:
+    type: object
+    required:
+      - name
+      - address
+      - email
+    properties:
+      name:
+        type: string
+        minLength: 3
+        maxLength: 32
+      email:
+        type: string
+        format: email
+      address:
+        type: string
+
+  error:
+    type: object
+    required:
+      - code
+      - message
+    properties:
+      code:
+        type: string
+        example: error code
+      message:
+        type: string
+        example: error message
+
+responses:
+  400:
+    description: Bad Request
+    schema:
+      $ref: '#/definitions/error'
+  401:
+    description: Unauthorized
+    schema:
+      $ref: '#/definitions/error'
+  403:
+    description: Forbidden
+    schema:
+      $ref: '#/definitions/error'
+  404:
+    description: Not Found
+    schema:
+      $ref: '#/definitions/error'
+  409:
+    description: Conflict
+    schema:
+      $ref: '#/definitions/error'
+  500:
+    description: Internal Server Error
+    schema:
+      $ref: '#/definitions/error'

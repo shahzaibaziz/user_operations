@@ -1,0 +1,35 @@
+version: "3.8"
+
+services:
+  user_operation:
+    build: .
+    container_name: user_operation
+    depends_on:
+      - mongodb
+    environment:
+      HOST: 0.0.0.0
+      PORT: 8080
+      MONGO_DB_HOSTS: mongodb:27017
+      MONGO_DB_NAME: userdb
+      MONGO_DB_USERNAME:
+      MONGO_DB_PASSWORD:
+    image: user_operation:latest
+    ports:
+      - "8000:8080"
+
+  mongodb:
+    container_name: mongodb
+    image: mongo:4.2.7
+    ports:
+      - "27017:27017"
+
+
+  swagger-ui:
+    image: swaggerapi/swagger-ui
+    container_name: "swagger-ui"
+    ports:
+      - "8001:8080"
+    volumes:
+      - ./swagger.yml:/swagger.yml
+    environment:
+      SWAGGER_JSON: /swagger.yml
