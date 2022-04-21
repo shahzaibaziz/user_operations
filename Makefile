@@ -8,19 +8,30 @@ tmp/dev_image_id:
 	@docker inspect -f "{{ .ID }}" ${DEV_IMAGE} > tmp/dev_image_id
 
 clean:
-	@rm -rf tmp
-t:
-	${DOCKRUN} golangci-lint run
+	@${DOCKRUN} bash -c 'rm -rf bin tmp vendor'
+vendor: tmp/vendor-installed
+vendor: tmp/vendor-installed
+tmp/vendor-installed: tmp/dev_image_id go.mod
+	@mkdir -p vendor
+	${DOCKRUN} go mod tidy
+	${DOCKRUN} go mod vendor
+	@date > tmp/vendor-installed
+	@chmod 644 go.sum || :
+
+format: tmp/vendor-installed
+	${DOCKRUN} bash ./scripts/format.sh
 codegen: prepare
 	${DOCKRUN} bash ./scripts/swagger.sh
-format: prepare
-	${DOCKRUN} bash ./scripts/format.sh
 check: format
 	${DOCKRUN} bash ./scripts/check.sh
 build:
 	bash ./scripts/build.sh
-test:
+test: mongod
 	${DOCKTEST} bash ./scripts/test.sh
+mongod: db_stop
+	docker run -d --name mongodb_dev  -p 27017:27017 mongo:4.2.7
+db_stop:
+	bash ./scripts/db_stop.sh
 help:
 	@echo
 	@echo 'Usage: make COMMAND'

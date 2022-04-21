@@ -17,8 +17,9 @@ const (
 	// Mongodb field names.
 	pk = "_id"
 	// Filter map keys.
-	idRef   = "id"
-	nameRef = "name"
+	idRef    = "id"
+	nameRef  = "name"
+	emailRef = "email"
 	// Options map keys.
 	limitRef = "limit"
 )
