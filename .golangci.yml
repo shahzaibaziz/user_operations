@@ -183,6 +183,8 @@ issues:
         - paralleltest
         - testpackage
         - wsl
+        - tenv
+        - containedctx
 
     - path: cmd/user_operations_server/main.go
       linters:
