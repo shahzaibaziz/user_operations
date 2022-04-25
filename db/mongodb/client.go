@@ -25,6 +25,10 @@ func NewClient(option db.Option) (db.DataStore, error) {
 		return nil, err
 	}
 
+	if viper.GetString(config.MongoDBHost) != "" {
+		clientOpts.Hosts = []string{viper.GetString(config.MongoDBHost)}
+	}
+	
 	dbClient, err := mongo.Connect(ctx, clientOpts)
 	if err != nil {
 		return nil, wraperrors.Wrap(err, "unable to connect to database")
