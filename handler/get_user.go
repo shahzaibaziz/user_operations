@@ -40,7 +40,7 @@ func (r *getUser) Handle(params service.GetUserParams) middleware.Responder {
 	} else if err != nil {
 		log(ctx).Errorf("failed to get user", err)
 
-		return service.NewUpdateUserDefault(http.StatusInternalServerError).WithPayload(
+		return service.NewGetUserDefault(http.StatusInternalServerError).WithPayload(
 			&genModel.Error{
 				Code:    swag.String(fmt.Sprintf("%v", http.StatusInternalServerError)),
 				Message: swag.String(err.Error()),
@@ -48,5 +48,5 @@ func (r *getUser) Handle(params service.GetUserParams) middleware.Responder {
 	}
 
 	log(ctx).Infof("user found %v", user)
-	return service.NewRegisterUserCreated().WithPayload(user)
+	return service.NewGetUserOK().WithPayload(user)
 }
