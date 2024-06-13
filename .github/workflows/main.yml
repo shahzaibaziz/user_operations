@@ -13,7 +13,7 @@ jobs:
         uses: actions/checkout@v2
       
       - name: Generate JSON SBOM
-        uses: CycloneDX/gh-dotnet-generate-sbom@master
+        uses: CycloneDX/cyclonedx-gomod@master
         with:
           path: ./CycloneDX.sln
           json: true
